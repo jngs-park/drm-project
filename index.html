@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>웹 DRM 뷰어</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+
+<body>
+    <div id="login-screen">
+        <h2>보안 문서 열람</h2>
+        <p>열람 비밀번호를 입력하세요 (힌트: 1234)</p>
+        <input type="text" id="id-input" placeholder="아이디" style="margin-bottom: 10px;"><br>
+        <input type="password" id="password-input" placeholder="비밀번호">
+        <button id="submit-btn">문서 열기</button>
+    </div>
+
+    <div class="viewer-container" id="viewer-container" style="display: none;">
+        <canvas id="pdf-canvas"></canvas>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
