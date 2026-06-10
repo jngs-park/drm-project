@@ -2,6 +2,10 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const CryptoJS = require('crypto-js');
+const sec = require('./securityLogger');
+
+// 로깅은 절대 요청 처리를 방해하지 않는다 (실패해도 무시하고 진행)
+function safeLog(fn) { try { fn(); } catch (_) { /* 보안 로깅 실패는 무시 */ } }
 
 const app = express();
 const PORT = 3000;
@@ -28,6 +32,7 @@ app.post('/api/getDocument', (req, res) => {
     // 1. 유저 확인 로직
     const user = users[userId];
     if (!user || user.password !== userPassword) {
+        safeLog(() => sec.logLoginFailure({ ...sec.fromRequest(req), user: userId, reason: 'invalid_credentials' }));
         return res.status(401).json({ message: '아이디 또는 비밀번호가 틀렸습니다!' });
     }
 
@@ -40,6 +45,8 @@ app.post('/api/getDocument', (req, res) => {
 
         // 접속 IP 가져오기 (내 컴퓨터에서 테스트 중이라 '::1' 같은 형태로 나올 수 있음)
         const userIp = req.ip || req.connection.remoteAddress;
+
+        safeLog(() => sec.logDocView({ ...sec.fromRequest(req), user: userId, docId: 'sample.locked' }));
 
         // 2. 문서 데이터와 함께 '로그인한 유저의 정보(이름, IP)'도 프론트엔드로 보내줌!
         res.json({ 
